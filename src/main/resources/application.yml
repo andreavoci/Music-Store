@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/psw
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        jdbc:
+          lob:
+            non_contextual.creation: true
+        default_schema: ${store}
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    generate-ddl: false
+
+server:
+  port: 9090
+
+token:
+  jwtSecret: musicStoreSecretKey
+  jwtExpirationMs: 864000000
+
+logging:
+  level:
+    org.springframework.security: TRACE
