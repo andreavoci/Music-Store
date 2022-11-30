@@ -31,8 +31,10 @@ public class ShoppingCartController {
     @GetMapping(value = "/add", consumes = {"application/json"})
     public ResponseEntity<?> addToCart(@RequestBody ShoppingCart cart, @RequestParam("cartItems") CartItems cartItems, @RequestParam("quantity") int quantity) throws ProductNotFoundException {
         Optional<Product> optionalProduct = productService.getProducts(cartItems.getProduct().getId());
-        if(optionalProduct.isPresent())
+        if(optionalProduct.isPresent()) {
+            cartItems.setQuantity(quantity);
             return ResponseEntity.ok(cartService.updateCart(cartItems, cart.getUser()));
+        }
         return ResponseEntity.badRequest().body(new ResponseMessage("Bad request"));
     }
 
