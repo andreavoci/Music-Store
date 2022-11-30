@@ -49,7 +49,7 @@ public class ProductController {
     @GetMapping(value = "/all/paged", produces = "application/json")
     public ResponseEntity<List<Product>> getAllPaged(@RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
                                                    @RequestParam(value = "pageSize", defaultValue = "9") int pageSize,
-                                                   @RequestParam(value = "sortBy", defaultValue = "idMusic") String sortBy){
+                                                   @RequestParam(value = "sortBy", defaultValue = "id") String sortBy){
         List<Product> result = productService.showAllProductsPaged(pageNumber, pageSize, sortBy);
         return ResponseEntity.ok(result);
     }
