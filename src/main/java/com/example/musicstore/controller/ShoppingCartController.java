@@ -3,7 +3,6 @@ package com.example.musicstore.controller;
 import com.example.musicstore.entity.CartItems;
 import com.example.musicstore.entity.Product;
 import com.example.musicstore.entity.ShoppingCart;
-import com.example.musicstore.repository.CartItemsRepository;
 import com.example.musicstore.service.AccountingService;
 import com.example.musicstore.service.ProductService;
 import com.example.musicstore.service.ShoppingCartService;
