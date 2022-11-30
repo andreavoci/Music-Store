@@ -82,6 +82,5 @@ public class Product {
         this.cover=cover;
         this.stock=stock;
         this.version=version;
-
     }
 }

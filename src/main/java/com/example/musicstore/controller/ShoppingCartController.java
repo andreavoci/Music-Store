@@ -47,8 +47,8 @@ public class ShoppingCartController {
         return ResponseEntity.badRequest().body(new ResponseMessage("Bad request"));
     }
 
-    @GetMapping(value = "/products", consumes = {"application/json"})
-    public ResponseEntity<?> getProducts(@RequestBody ShoppingCart cart){
+    @GetMapping(value = "/items}", consumes = {"application/json"})
+    public ResponseEntity<?> getItems(@RequestBody ShoppingCart cart){
         Set<CartItems> products = cart.getCartItems();
         if(!products.isEmpty())
             return ResponseEntity.ok(products);
