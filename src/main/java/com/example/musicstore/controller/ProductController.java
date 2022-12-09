@@ -54,13 +54,13 @@ public class ProductController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/{title}", produces = "application/json")
+    @GetMapping(value = "/title", produces = "application/json")
     public ResponseEntity<?> getByTitle(@RequestParam(value = "title", defaultValue = "") String title){
         List<Product> result = productService.showProductsByTitle(title);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/{artist}", produces = "application/json")
+    @GetMapping(value = "/artist", produces = "application/json")
     public ResponseEntity<?> getByArtist(@RequestParam(value = "artist", defaultValue = "") String artist){
         List<Product> result = productService.showProductsByArtist(artist);
         return ResponseEntity.ok(result);
