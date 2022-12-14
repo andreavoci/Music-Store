@@ -19,11 +19,11 @@ public class CartItems {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "product")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "cart")
+    @JoinColumn(name = "cart_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonIgnore

@@ -17,11 +17,11 @@ public class OrderItems {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "product")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "order")
+    @JoinColumn(name = "order_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonIgnore

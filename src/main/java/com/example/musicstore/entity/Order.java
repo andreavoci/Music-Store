@@ -24,7 +24,7 @@ public class Order {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonIgnore

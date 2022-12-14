@@ -28,7 +28,7 @@ public class ShoppingCart {
     private User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @Column(name = "product")
+    @Column(name = "product_id")
     private Set<CartItems> cartItems;
 
     @Basic
