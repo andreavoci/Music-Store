@@ -54,6 +54,7 @@ public class WebSecurityConfig {
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/product/**").permitAll()
                 .antMatchers("/api/report/**").permitAll()
+                .antMatchers("/api/admin/product/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 

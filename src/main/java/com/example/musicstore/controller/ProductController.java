@@ -18,18 +18,18 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/api/product")
+@RequestMapping("/api")
 public class ProductController {
     @Autowired
     ProductService productService;
 
-    @GetMapping(value = "/all", produces = "application/json")
+    @GetMapping(value = "/product/all", produces = "application/json")
     public ResponseEntity<?> getAllProducts(){
         return ResponseEntity.ok(productService.showAllProducts());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "/add", consumes = {"application/json"})
+    @PostMapping(value = "/admin/product/add", consumes = {"application/json"})
     public ResponseEntity<?> addMusic(@RequestBody @Valid Product product) throws ProductNotFoundException {
         Optional<Product> optionalMusic = productService.addProduct(product);
         if(optionalMusic.isPresent())
@@ -38,7 +38,7 @@ public class ProductController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "/edit", consumes = {"application/json"})
+    @PostMapping(value = "admin/product/edit", consumes = {"application/json"})
     public ResponseEntity<?> updateMusic(@RequestBody @Valid Product product) {
         Optional<Product> optionalMusic = productService.addProduct(product);
         if(optionalMusic.isPresent())
@@ -46,7 +46,7 @@ public class ProductController {
         return ResponseEntity.badRequest().body(new ResponseMessage("Product inexistent"));
     }
 
-    @GetMapping(value = "/all/paged", produces = "application/json")
+    @GetMapping(value = "/product/all/paged", produces = "application/json")
     public ResponseEntity<List<Product>> getAllPaged(@RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
                                                    @RequestParam(value = "pageSize", defaultValue = "9") int pageSize,
                                                    @RequestParam(value = "sortBy", defaultValue = "id") String sortBy){
@@ -54,19 +54,19 @@ public class ProductController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/title/{title}", produces = "application/json")
+    @GetMapping(value = "/product/title/{title}", produces = "application/json")
     public ResponseEntity<?> getByTitle(@RequestParam(value = "title", defaultValue = "") String title){
         List<Product> result = productService.showProductsByTitle(title);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/artist/{artist}", produces = "application/json")
+    @GetMapping(value = "/product/artist/{artist}", produces = "application/json")
     public ResponseEntity<?> getByArtist(@RequestParam(value = "artist", defaultValue = "") String artist){
         List<Product> result = productService.showProductsByArtist(artist);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/{genre}/paged", produces = "application/json")
+    @GetMapping(value = "/product/{genre}/paged", produces = "application/json")
     public ResponseEntity<?> getByGenrePaged(@PathVariable("genre") String genre,
                                         @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
                                         @RequestParam(value = "pageSize", defaultValue = "9") int pageSize,
@@ -75,19 +75,19 @@ public class ProductController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/song", produces = "application/json")
+    @GetMapping(value = "/product/song", produces = "application/json")
     public ResponseEntity<?> getBySong(@RequestParam(value = "song", defaultValue = "") String song){
         List<Product> result = productService.showProductsBySong(song);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/relase_date", produces = "application/json")
+    @GetMapping(value = "/product/relase_date", produces = "application/json")
     public ResponseEntity<?> getByRelasDate(@RequestParam(value = "relase_date", defaultValue = "") String date) {
         List<Product> result = productService.showProductsByRelaseDate(date);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/{id}", produces = {"application/json"})
+    @GetMapping(value = "/product/{id}", produces = {"application/json"})
     public ResponseEntity<?> getByIdMusic(@PathVariable("id") int idMusic){
         Optional<Product> optionalMusic = productService.getProducts(idMusic);
         if(optionalMusic.isPresent()) {

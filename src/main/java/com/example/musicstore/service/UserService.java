@@ -4,9 +4,7 @@ import com.example.musicstore.entity.User;
 import com.example.musicstore.entity.UserRole;
 import com.example.musicstore.repository.RoleRepository;
 import com.example.musicstore.repository.UserRepository;
-import com.example.musicstore.support.authentication.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,17 +22,13 @@ public class UserService implements UserDetailsService {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
     private PasswordEncoder encoder;
-    @Autowired
-    private JwtUtils jwtUtils;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found!"));
-        return UserDetailsPrincipal.build(user);
+        return new UserDetailsPrincipal(user);
     }
 
     @Transactional(readOnly = true)
@@ -53,11 +47,10 @@ public class UserService implements UserDetailsService {
     public boolean checkRole(UserRole role){return roleRepository.existsByRole(role);}
 
     @Transactional(readOnly = false)
-    public User registerUser(SignupRequest signupRequest){
+    public void registerUser(SignupRequest signupRequest){
         User user = new User(signupRequest.getUsername(), signupRequest.getEmail(),
                 encoder.encode(signupRequest.getPassword()));
         userRepository.save(user);
-        return user;
     }
 
     public Optional<User> authenticateUser(SignupRequest signupRequest) {
