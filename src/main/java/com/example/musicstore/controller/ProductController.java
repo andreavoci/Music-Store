@@ -30,7 +30,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/admin/product/add", consumes = {"application/json"})
-    public ResponseEntity<?> addMusic(@RequestBody @Valid Product product) throws ProductNotFoundException {
+    public ResponseEntity<?> addProduct(@RequestBody @Valid Product product) throws ProductNotFoundException {
         Optional<Product> optionalMusic = productService.addProduct(product);
         if(optionalMusic.isPresent())
             return ResponseEntity.ok(optionalMusic.get());
@@ -39,7 +39,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "admin/product/edit", consumes = {"application/json"})
-    public ResponseEntity<?> updateMusic(@RequestBody @Valid Product product) {
+    public ResponseEntity<?> updateProduct(@RequestBody @Valid Product product) {
         Optional<Product> optionalMusic = productService.addProduct(product);
         if(optionalMusic.isPresent())
             return ResponseEntity.ok(optionalMusic.get());

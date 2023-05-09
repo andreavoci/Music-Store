@@ -38,6 +38,7 @@ public class AuthController {
 
     @PostMapping(value = "/signup/customer", consumes = {"application/json"})
     public ResponseEntity<ResponseMessage> registerCustomer(@Valid @RequestBody SignupRequest signupRequest){
+        System.out.println("Ciao");
         if(signupRequest.getRole()!=null && signupRequest.getRole().contains("admin"))
             return ResponseEntity.badRequest().body(new ResponseMessage("Access Denied"));
         return getMessageResponseResponseEntity(signupRequest);
@@ -49,6 +50,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new ResponseMessage("Username unavailable"));
         if(userService.checkEmail(signupRequest.getEmail()))
             return ResponseEntity.badRequest().body(new ResponseMessage("Email unavailable"));
+        System.out.println("ciao2");
         userService.registerUser(signupRequest);
         return ResponseEntity.ok(new ResponseMessage("The user has been successfully registered"));
     }

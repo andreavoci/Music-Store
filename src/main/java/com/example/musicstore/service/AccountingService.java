@@ -25,7 +25,7 @@ public class AccountingService {
 
     @Transactional(readOnly = false)
     public Optional<User> getUser(String username){
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsernameContaining(username);
         if(user.isEmpty()) return Optional.empty();
         return user;
     }

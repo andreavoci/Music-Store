@@ -31,28 +31,28 @@ public class ShoppingCartService {
     @Transactional(readOnly = false)
     public ShoppingCart updateCart(CartItems cartItems, User user) throws ProductNotFoundException{
         Optional<Product> productFromDb = productRepository.findById(cartItems.getProduct().getId());
-        ShoppingCart cartFromDb = shoppingCartRepository.findByUser(user);
+        Optional<ShoppingCart> cartFromDb = shoppingCartRepository.findByUser(user);
         if(productFromDb.isEmpty())
             throw new ProductNotFoundException("Product not found!");
         else{
             Product p = productFromDb.get();
-            cartItems.setCart(cartFromDb);
+            cartItems.setCart(cartFromDb.get());
             cartItems.setAmount(p.getPrice()* cartItems.getQuantity());
-            Set<CartItems> products = cartFromDb.getCartItems();
-            double newAmount = cartFromDb.getAmount();
+            Set<CartItems> products = cartFromDb.get().getCartItems();
+            double newAmount = cartFromDb.get().getAmount();
             for(CartItems cI : products){
                 if(cI.getProduct().equals(p)){
                     newAmount -= p.getPrice()* cI.getQuantity();
                     products.remove(cI);
                     cartItemsRepository.delete(cI);
-                    cartFromDb.setAmount(newAmount);
-                    return shoppingCartRepository.save(cartFromDb);
+                    cartFromDb.get().setAmount(newAmount);
+                    return shoppingCartRepository.save(cartFromDb.get());
                 } else if (cartItems.getQuantity() < p.getStock()) {
                     newAmount += p.getPrice()*(cartItems.getQuantity() - cI.getQuantity());
                     cI.setAmount(p.getPrice()* cartItems.getQuantity());
                     cI.setQuantity(cartItems.getQuantity());
-                    cartFromDb.setAmount(newAmount);
-                    return shoppingCartRepository.save(cartFromDb);
+                    cartFromDb.get().setAmount(newAmount);
+                    return shoppingCartRepository.save(cartFromDb.get());
                 }else{
                     throw new ProductNotFoundException("Product not available in the requested quantity!");
                 }
@@ -60,13 +60,13 @@ public class ShoppingCartService {
             newAmount += p.getPrice()* cartItems.getQuantity();
             products.add(cartItems);
             cartItemsRepository.save(cartItems);
-            cartFromDb.setAmount(newAmount);
-            return shoppingCartRepository.save(cartFromDb);
+            cartFromDb.get().setAmount(newAmount);
+            return shoppingCartRepository.save(cartFromDb.get());
         }
     }
 
     @Transactional(readOnly = true)
-    public ShoppingCart getCartByUser(User user) throws UserNotFoundException {
+    public Optional<ShoppingCart> getCartByUser(User user) throws UserNotFoundException {
         if(!userRepository.existsById(user.getId())) throw new UserNotFoundException("User not found!");
         return shoppingCartRepository.findByUser(user);
     }

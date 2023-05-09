@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -29,13 +28,13 @@ public class OrderService {
 
     @Transactional(readOnly = false)
     public Order purchaseOrder(Order order, String username) throws ProductNotFoundException, BadOrderException, OutOfStockException, UserNotFoundException {
-        Optional<User> userFromDb = userRepository.findByUsername(username);
-        ShoppingCart cart;
+        Optional<User> userFromDb = userRepository.findByUsernameContaining(username);
+        Optional<ShoppingCart> cart;
         double totalAmount = 0;
         if(userFromDb.isPresent()){
             cart = cartService.getCartByUser(userFromDb.get());
-            if(cart!=null){
-                for(CartItems cartItems : cart.getCartItems()){
+            if(cart.isPresent()){
+                for(CartItems cartItems : cart.get().getCartItems()){
                     if(cartItems.getQuantity()>cartItems.getProduct().getStock())
                         throw new OutOfStockException("Product out of stock");
                     totalAmount += cartItems.getProduct().getPrice() * cartItems.getQuantity();
@@ -50,7 +49,7 @@ public class OrderService {
         }
         Set<OrderItems> orderItemsFromDb = new HashSet<>();
         Order orderFromDb = new Order(userFromDb.get(), orderItemsFromDb, order.getEmail(), order.getTelephone(), order.getShippingAddress(), totalAmount, order.getStatus(), order.getPaymentMethod() );
-        for(CartItems cartItems : cart.getCartItems()){
+        for(CartItems cartItems : cart.get().getCartItems()){
             Product p = cartItems.getProduct();
             productService.updateProduct(p.setStock(p.getStock()- cartItems.getQuantity()));
             OrderItems updatedOrderItems = new OrderItems(cartItems.getProduct(), orderFromDb, cartItems.getQuantity(), cartItems.getAmount());
@@ -58,7 +57,7 @@ public class OrderService {
             orderItemsFromDb.add(updatedOrderItems);
         }
         Order orderFinal = orderRepository.save(orderFromDb);
-        ShoppingCart cartFromDb = this.cartService.getCartByUser(userFromDb.get());
+        ShoppingCart cartFromDb = this.cartService.getCartByUser(userFromDb.get()).get();
         cartService.clearCart(cartFromDb);
         return orderFinal;
     }

@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -25,11 +26,12 @@ public class ShoppingCart {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonIgnore
+    @MapsId
     private User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @Column(name = "product_id")
-    private Set<CartItems> cartItems;
+    @Column(name = "products")
+    private Set<CartItems> cartItems = new HashSet<>();
 
     @Basic
     @Column(name = "amount")
