@@ -1,0 +1,191 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<ng-component *ngIf="user?.role ==='CUSTOMER';then customer;else reserved"></ng-component>
+<ng-template #customer>
+  <p *ngIf="user" style="font-size: 48px; font-weight: bold; text-align: center;">Hi, {{user.username}}!</p>
+  <br><br><br>
+  <h1>Orders</h1>
+  <br><br>
+  <div class="order_container" *ngIf="orders.length > 0">
+    <div class="order_items" *ngFor="let o of orders">
+        <ul class="order_list">
+            <li class="order_item clearfix" *ngFor="let p of o.products, let last = last">
+                <div class="order_item_image"><img src="{{ p.product.cover}}" alt="" routerLink="/product/{{p.product.id}}"></div>
+                <div class="order_item_info d-flex flex-md-row flex-column justify-content-between">
+                    <div class="order_item_name order_info_col">
+                        <div class="order_item_title">Name</div>
+                        <div class="order_item_text">{{ p.product.title }}</div>
+                    </div>
+                    <div class="order_item_name order_info_col" *ngIf="o.products.length==1 || last">
+                      <div class="order_item_title">Date</div>
+                      <div class="order_item_text">{{o.purchaseTime | date: 'dd MMM yyyy'}}</div>
+                  </div>
+                    <div class="order_item_name order_info_col" *ngIf="o.products.length==1 || last">
+                      <div class="order_item_title">Total</div>
+                      <div class="order_item_text">{{o.amount | currency: 'EUR'}}</div>
+                  </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+  <div class="center-block">
+    <div class="block">
+      <button (click)="logout()" class="logout-btn" style="font-size: 36; text-align: center;">Logout</button>
+    </div>
+  </div>
+  </div>
+</ng-template>
+<ng-template #reserved>
+    <h1>PRODUCTS</h1>
+    <dialog #dialogoAdd>
+      <div class="background-blur">
+        <div class="component-popup" style="width:auto;">
+          <p id="error-popup">{{errorPopupText}}</p>
+          <div class="navbar-popup">
+            <p class="title-popup">Insert Product</p>
+            <button class="item-button" style="margin:5px;background:red;width:30px;height:30px;" (click)="dialogoAdd.close();">
+              <span class="material-icons" style="font-size:25px;color:white;width:100%;">close</span>
+            </button>
+          </div>
+          <div>
+            <form #productForm="ngForm" (ngSubmit)="createProduct(productForm.value)">
+              <br>
+              <p>Titile</p>
+              <input name="title" ngModel (click)="errorPopup_animation('',false)">
+              <p>Artist</p>
+              <input name="artist" ngModel (click)="errorPopup_animation('',false)">
+              <p>ISRC</p>
+              <input name="isrc" ngModel (click)="errorPopup_animation('',false)">
+              <p>Relase Date</p>
+              <input type="date" name="releaseDate" ngModel (click)="errorPopup_animation('',false)">
+              <p>Genre</p>
+              <select name="genre" ngModel (click)="errorPopup_animation('',false)" required>
+                <option *ngFor="let genre of genres"[ngValue]="genre">{{genre}}</option>
+              </select>
+              <p>CD Number</p>
+              <input name="cd" ngModel (click)="errorPopup_animation('',false)" required>
+              <p>Tracklist</p>
+              <input name="tracklist" ngModel (click)="errorPopup_animation('',false)">
+              <p>Price</p>
+              <input type="number" name="price" ngModel (click)="errorPopup_animation('',false)" required>
+              <p>Cover</p>
+              <input name="cover" ngModel (click)="errorPopup_animation('',false)">
+              <p>Stock</p>
+              <input type="number" name="stock" ngModel (click)="errorPopup_animation('',false)" required>
+              <div class="footer-popup">
+                <button type="submit" class="item-button" style="margin:5px;background:green;width:30px;height:30px;">
+                  <span class="material-icons" style="font-size:25px;color:white;width:100%;">arrow_forward</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </dialog>
+    <dialog #dialogEdit>
+      <div class="background-blur">
+        <div class="component-popup" style="width:auto;">
+          <p id="error-popup">{{errorPopupText}}</p>
+          <div class="navbar-popup">
+            <p class="title-popup">Modifica Pellicola</p>
+            <button class="item-button" style="margin:5px;background:red;width:30px;height:30px;" (click)="dialogEdit.close();">
+              <span class="material-icons" style="font-size:25px;color:white;width:100%;">close</span>
+            </button>
+          </div>
+          <div>
+            <form #editProductForm="ngForm" (ngSubmit)="update(editProductForm.value)">
+              <br>
+              <p>Title</p>
+              <input name="title" ngModel [ngModel]="albumSelected.title" (click)="errorPopup_animation('',false)">
+
+              <p>Release Date</p>
+              <input type="date" name="releaseDate" ngModel [ngModel]="albumSelected.releaseDate | date:'yyyy-MM-dd'" (click)="errorPopup_animation('',false)">
+
+              <p>Artist</p>
+              <input name="artist" ngModel [ngModel]="albumSelected.artist" (click)="errorPopup_animation('',false)">
+
+              <p>ISRC</p>
+              <input name="isrc" ngModel [ngModel]="albumSelected.isrc" (click)="errorPopup_animation('',false)">
+
+              <p>Genre</p>
+              <select name="genre" ngModel [ngModel]="albumSelected.genre" (click)="errorPopup_animation('',false)" required>
+                <option *ngFor="let genre of genres"[ngValue]="genre">{{genre}}</option>
+              </select>
+
+              <p>CD Number</p>
+              <input name="cd" ngModel [ngModel]="albumSelected.cd" (click)="errorPopup_animation('',false)">
+
+              <p>Tracklist</p>
+              <input name="tracklist" ngModel [ngModel]="albumSelected.tracklist" (click)="errorPopup_animation('',false)">
+
+              <p>Price</p>
+              <input name="price" ngModel [ngModel]="albumSelected.price" (click)="errorPopup_animation('',false)">
+
+              <p>Cover</p>
+              <input name="cover" ngModel [ngModel]="albumSelected.cover" (click)="errorPopup_animation('',false)">
+
+              <p>Stock</p>
+              <input name="stock" ngModel [ngModel]="albumSelected.stock" (click)="errorPopup_animation('',false)">
+              <div class="footer-popup">
+                <button type="submit" class="item-button" style="margin:5px;background:green;width:30px;height:30px;">
+                  <span class="material-icons" style="font-size:25px;color:white;width:100%;">arrow_forward</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </dialog>
+    <div class="container-buttons">
+      <button class="item-button" style="background:green" (click)="dialogoAdd.show();">
+        <span class="material-icons" style="font-size:30px;color:white;width:100%;">add</span>
+      </button>
+      <button class="item-button" style="background:red" (click)="deleteProduct();">
+        <span class="material-icons" style="font-size:30px;color:white;width:100%;">delete</span>
+      </button>
+      <button class="item-button" style="background:blue" (click)="editProduct();">
+        <span class="material-icons" style="font-size:30px;color:white;width:100%;">edit</span>
+      </button>
+      <p class="button-item">{{messageError}}</p>
+      <div *ngIf="checkDelete == true">
+        <button class="button-item" style="padding: 2px 6px 2px 6px;margin-left:5px;" (click)="confirmDeletingProduct()">Confirm</button>
+        <button class="button-item" style="padding: 2px 6px 2px 6px;margin-left:5px;" (click)="abortDeletingProduct()">Abort</button>
+    </div>
+  </div>
+
+  <div class="table-div">
+    <table>
+      <thead>
+        <tr class="title">
+          <th></th>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Released Date</th>
+          <th>Artist</th>
+          <th>Genre</th>
+          <th>ISRC</th>
+          <th>Price</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let p of products">
+        <td><input type="checkbox" [value]="p.id" (change)="onCheckChangeFor($event)"
+          style="width:20px;height:20px"></td>
+        <td>{{p.id}}</td>
+        <td>{{p.title}}</td>
+        <td>{{p.releaseDate | date:'dd/MM/yyyy'}}</td>
+        <td>{{p.artist}}</td>
+        <td>{{p.genre}}</td>
+        <td>{{p.isrc}}</td>
+        <td>{{p.price}}</td>
+        <td>{{p.stock}}</td>
+      </tbody>
+    </table>
+</div>
+<div class="center-block">
+  <div class="block">
+    <button (click)="logout()" class="logout-btn" style="font-size: 36; text-align: center;">Logout</button>
+  </div>
+</div>
+</ng-template>
+
+

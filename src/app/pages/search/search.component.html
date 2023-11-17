@@ -1,0 +1,10 @@
+  <form class="form-header" (ngSubmit)="doSearch(myInput.value)">
+    <input
+      #myInput
+      (keyup.enter)="doSearch(myInput.value)"
+      class="au-input au-input-xl"
+      type="text"
+      placeholder="Search for an album ..."
+    />
+    <button class="au-btn-submit" type="submit">Search</button>
+  </form>

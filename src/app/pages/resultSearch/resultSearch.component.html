@@ -1,0 +1,30 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+<br/>
+<h1>Results</h1>
+<br/>
+<div class="container">
+    <div class="row clearfix">
+      <ng-container *ngFor="let product of products">
+        <div class="col-lg-3 col-md-4 col-sm-12">
+            <div class="card product_item">
+                <div class="body">
+                    <div class="cp_img">
+                        <img src="{{product.cover}}" alt="Product" class="img-fluid">
+                        <div class="hover">
+                            <a routerLink="/product/{{product.id}}" class="btn btn-primary btn-sm waves-effect"><i class="zmdi zmdi-plus"></i></a>
+                            <a (click)="addToCart(product)" class="btn btn-primary btn-sm waves-effect"><i class="zmdi zmdi-shopping-cart"></i></a>
+                        </div>
+                    </div>
+                    <div class="product_details">
+                        <h5>{{product.title}}</h5>
+                        <h6>{{product.artist}}</h6>
+                        <ul class="product_price list-unstyled">
+                            <li class="price">€{{product.price}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+          </div>
+      </ng-container>
+    </div>
+</div>

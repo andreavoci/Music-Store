@@ -1,0 +1,31 @@
+<div class="container">
+  <div *ngIf="token != null; else elseBlock">
+    <h1>ALREADY LOGGED IN!</h1>
+  </div>
+  <ng-template #elseBlock>
+    <br><br><br><br><br><br>
+    <div class="container-form">
+    <form #registrationForm="ngForm" (ngSubmit)="register(registrationForm.value)">
+        <p id="title">REGISTRATION</p><br>
+
+        <div class="inner-form">
+          <div id="left">
+            <p>Username</p>
+            <p>Email</p>
+            <p>Password</p>
+            <p>Confirm Password</p>
+          </div>
+          <div id="right">
+            <input type="text" name="username" ngModel placeholder="username"><br><br>
+            <input type="text" name="email" ngModel placeholder="email"><br><br>
+            <input type="password" name="password" ngModel placeholder="password"><br><br>
+            <input type="password" name="confirm-password" ngModel placeholder="password"><br><br>
+          </div>
+        </div>
+        <b><p style="color:black;weight:bold" id="loginform-error"><p></b>
+        <button type="submit">Register</button>
+      </form>
+      <br>
+    </div>
+  </ng-template>
+</div>

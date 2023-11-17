@@ -1,0 +1,19 @@
+<div class="container">
+  <div *ngIf="token != null; else elseBlock">
+    <p style="color:white">error</p>
+  </div>
+  <ng-template #elseBlock>
+    <br><br><br><br><br><br>
+    <div class="container-form">
+      <form #loginForm="ngForm" (ngSubmit)="login(loginForm.value)">
+        <p id="title">LOGIN</p><br>
+        <input type="text" name="username" ngModel placeholder="username"><br><br>
+        <input type="password" name="password" ngModel placeholder="password"><br><br>
+        <b><p style="color:black;weight:bold" id="loginform-error"><p></b>
+        <button type="submit">Login</button>
+      </form>
+      <br>
+      <p style="font-size:12px;color:white;">Not an user? Register <a href="/registration">HERE</a></p>
+    </div>
+  </ng-template>
+</div>

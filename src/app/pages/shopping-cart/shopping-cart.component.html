@@ -1,0 +1,70 @@
+<br/>
+<h1>Cart</h1>
+<div class="cart_section">
+    <div class="container-fluid p-3">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="cart_container" *ngIf="items.length > 0">
+                    <div class="cart_items">
+                        <ul class="cart_list">
+                            <li class="cart_item clearfix" *ngFor="let tempCartItem of items">
+                                <div class="cart_item_image"><img src="{{ tempCartItem.product.cover}}" alt="" routerLink="/product/{{tempCartItem.product.id}}"></div>
+                                <div class="cart_item_info d-flex flex-md-row flex-column justify-content-between">
+                                    <div class="cart_item_name cart_info_col">
+                                        <div class="cart_item_title">Name</div>
+                                        <div class="cart_item_text">{{ tempCartItem.product.title }}</div>
+                                    </div>
+                                    <div class="cart_item_price cart_info_col">
+                                      <div class="cart_item_title">Quantity</div>
+                                      <div class="cart_item_text"><button (click)="update(tempCartItem, -1)"> - </button> {{ tempCartItem.quantity}} <button (click)="update(tempCartItem, 1)" *ngIf="tempCartItem.quantity<=tempCartItem.product.stock">+</button> </div>
+                                  </div>
+                                    <div class="cart_item_price cart_info_col">
+                                        <div class="cart_item_title">Price</div>
+                                        <div class="cart_item_text"> {{ tempCartItem.amount | currency: 'EUR' }} </div>
+                                    </div>
+                                    <div>
+                                        <button (click)="remove(tempCartItem)">Remove</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div *ngIf="items.length == 0" class="alert alert-warning col-md-12" role="alert">
+                        Your shopping cart is empty
+                   </div>
+
+                    <div class="cart_buttons"> <a routerLink="/products" class="button cart_button_clear">Continue Shopping</a>
+                        <a (click)="checkout()" class="button cart_button_checkout">Checkout</a> </div>
+                </div>
+
+                <div *ngIf="items.length == 0" class="alert alert-danger col-md-12 p-2" role="alert">
+                    <i>Your shopping cart is empty</i>
+               </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+ <!-- <div class="container">
+    <div *ngFor="let i of items" class="container-elemento">
+      <div class="container-dettagli">
+        <p class="text-title">{{i.product.title}}</p>
+        <div class="container-info">
+            <p class="text-info">
+              {{i.product.artist}}
+            </p>
+        </div>
+      </div>
+      <div class="container-button">
+        <button type="button" class="button-right" (click)="remove(i)">
+          RIMUOVI
+        </button>
+      </div>
+    </div>
+    <div *ngIf="items.length>0" class="container-button">
+    <button type="button" class="button-right" (click)="checkout()">
+      CHECKOUT
+    </button>
+ </div>
+ </div> -->
+
