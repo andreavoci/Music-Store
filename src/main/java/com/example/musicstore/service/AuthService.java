@@ -21,6 +21,8 @@ public class AuthService {
     private PasswordEncoder encoder;
 
     public ResponseEntity<String> register(String username, String email, String password){
+        if(!email.contains("@"))
+            return ResponseEntity.badRequest().body("Email not valid!");
         Optional<User> userByEmail = userRepository.findUserByEmail(email);
         if(! userByEmail.isPresent()){
             User user = new User(username, email, encoder.encode(password));
