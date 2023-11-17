@@ -42,6 +42,7 @@ public class ShoppingCartService {
         }
     }
 
+    @Transactional
     public ResponseEntity<?> addToCart(Request<?> body) {
         Object o = body.getBody();
         if(o instanceof CartItems){
@@ -85,6 +86,7 @@ public class ShoppingCartService {
         }
     }
 
+    @Transactional
     public ResponseEntity removeItem(Request<?> body){
         Optional<User> optUser = authService.authenticate(body);
         Object o = body.getBody();
@@ -119,6 +121,7 @@ public class ShoppingCartService {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user doesn't exist");
     }
 
+    @Transactional
     public ResponseEntity purchase(Request body){
         Optional<User> optUser = authService.authenticate(body);
         if(optUser.isPresent()) {
@@ -161,14 +164,13 @@ public class ShoppingCartService {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user doesn't exist");
     }
 
+    @Transactional
     public ResponseEntity<?> update(Request body) {
         Optional<User> optUser = authService.authenticate(body);
         Object o = body.getBody();
         System.out.println(o);
-
         if (optUser.isPresent()) {
             Optional<ShoppingCart> optCart = shoppingCartRepository.findCartByUserID(optUser.get());
-
             if (optCart.isPresent()) {
                 if (o instanceof CartItems) {
                     CartItems item = (CartItems) o;
@@ -176,7 +178,6 @@ public class ShoppingCartService {
                     Optional<CartItems> existingItem = cart.getCartItems().stream()
                             .filter(existing -> existing.getProduct().getId() == item.getProduct().getId())
                             .findFirst();
-
                     if (existingItem.isPresent()) {
                         existingItem.ifPresent(cartItems -> {
                             int newQuantity = item.getQuantity();
@@ -184,11 +185,7 @@ public class ShoppingCartService {
                             cartItems.setQuantity(newQuantity);
                             cartItems.setAmount(newAmount);
                         });
-
-                        // Aggiorna l'importo totale del carrello prima del salvataggio
                         updateCartTotal(cart);
-
-                        // Salva il carrello
                         shoppingCartRepository.save(cart);
 
                         return ResponseEntity.ok(Collections.singletonMap("message", "Cart updated successfully"));
