@@ -3,12 +3,11 @@ package com.example.musicstore.controller;
 import com.example.musicstore.entity.MusicGenre;
 import com.example.musicstore.entity.Product;
 import com.example.musicstore.service.ProductService;
-import com.example.musicstore.support.ResponseMessage;
-import com.example.musicstore.support.exception.ProductNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,82 +17,35 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/api")
+@RequestMapping("/api/product")
 public class ProductController {
     @Autowired
     ProductService productService;
 
-    @GetMapping(value = "/product/all", produces = "application/json")
-    public ResponseEntity<?> getAllProducts(){
-        return ResponseEntity.ok(productService.showAllProducts());
+    @GetMapping("/{id}")
+    public Product getProduct(@PathVariable("id") Long id){return productService.getProduct(id);}
+
+    @GetMapping
+    public List<Product> getAllProducts(){
+        return productService.showAllProducts();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "/admin/product/add", consumes = {"application/json"})
-    public ResponseEntity<?> addProduct(@RequestBody @Valid Product product) throws ProductNotFoundException {
-        Optional<Product> optionalMusic = productService.addProduct(product);
-        if(optionalMusic.isPresent())
-            return ResponseEntity.ok(optionalMusic.get());
-        return ResponseEntity.badRequest().body(new ResponseMessage("Product inexistent"));
+    @PostMapping(path = "/create")
+    public ResponseEntity<?> addProduct(@RequestBody Product product){return productService.create(product);}
+
+    @PostMapping(path = "/update")
+    public ResponseEntity updateProduct(@RequestBody Product product){
+        return productService.update(product);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "admin/product/edit", consumes = {"application/json"})
-    public ResponseEntity<?> updateProduct(@RequestBody @Valid Product product) {
-        Optional<Product> optionalMusic = productService.addProduct(product);
-        if(optionalMusic.isPresent())
-            return ResponseEntity.ok(optionalMusic.get());
-        return ResponseEntity.badRequest().body(new ResponseMessage("Product inexistent"));
+    @PostMapping(path = "/delete")
+    public ResponseEntity deletedProduct(@RequestBody List<Long> product){
+        return productService.delete(product);
     }
 
-    @GetMapping(value = "/product/all/paged", produces = "application/json")
-    public ResponseEntity<List<Product>> getAllPaged(@RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
-                                                   @RequestParam(value = "pageSize", defaultValue = "9") int pageSize,
-                                                   @RequestParam(value = "sortBy", defaultValue = "id") String sortBy){
-        List<Product> result = productService.showAllProductsPaged(pageNumber, pageSize, sortBy);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping(value = "/product/title/{title}", produces = "application/json")
-    public ResponseEntity<?> getByTitle(@RequestParam(value = "title", defaultValue = "") String title){
-        List<Product> result = productService.showProductsByTitle(title);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping(value = "/product/artist/{artist}", produces = "application/json")
-    public ResponseEntity<?> getByArtist(@RequestParam(value = "artist", defaultValue = "") String artist){
-        List<Product> result = productService.showProductsByArtist(artist);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping(value = "/product/{genre}/paged", produces = "application/json")
-    public ResponseEntity<?> getByGenrePaged(@PathVariable("genre") String genre,
-                                        @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
-                                        @RequestParam(value = "pageSize", defaultValue = "9") int pageSize,
-                                        @RequestParam(value = "sortBy", defaultValue = "idMusic") String sortBy){
-        List<Product> result = productService.showProductsByGenre(MusicGenre.valueOf(genre.toUpperCase()), pageNumber,pageSize,sortBy);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping(value = "/product/song", produces = "application/json")
-    public ResponseEntity<?> getBySong(@RequestParam(value = "song", defaultValue = "") String song){
-        List<Product> result = productService.showProductsBySong(song);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping(value = "/product/relase_date", produces = "application/json")
-    public ResponseEntity<?> getByRelasDate(@RequestParam(value = "relase_date", defaultValue = "") String date) {
-        List<Product> result = productService.showProductsByRelaseDate(date);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping(value = "/product/{id}", produces = {"application/json"})
-    public ResponseEntity<?> getByIdMusic(@PathVariable("id") int idMusic){
-        Optional<Product> optionalMusic = productService.getProducts(idMusic);
-        if(optionalMusic.isPresent()) {
-            return ResponseEntity.ok(optionalMusic.get());
-        }else {
-            return ResponseEntity.badRequest().body(new ResponseMessage("Product inexistent"));
-        }
-    }
+   @PostMapping(value = "/search/title/{title}", produces = "application/json")
+   public ResponseEntity<?> getByTitle(@PathVariable String title){
+       List<Product> result = productService.showProductsByTitle(title);
+       return ResponseEntity.ok(result);
+   }
 }

@@ -5,6 +5,8 @@ import com.example.musicstore.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotNull;
@@ -12,16 +14,9 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Long> {
-    List<Product> findByTitleContaining(String title);
-    List<Product> findByTitleContainingIgnoreCase(String title);
-    List<Product> findByArtist(String artist);
-    List<Product> findByISRC(Long ISRC);
-    Page<Product> findByGenre(@NotNull(message = "Genre is required") MusicGenre genre, Pageable pageable);
-    List<Product> findByRelaseDate(String date);
-    List<Product> findByTracklistContaining(String song);
+    @Query("SELECT p FROM Product p WHERE LOWER(p.title) LIKE %:value%")
+    List<Product> findAllByTitle(@Param("value") String value);
 
-    boolean existsByTitle(String title);
-    boolean existsByISRC(Long ISRC);
-    boolean existsByArtist(String artist);
-    //boolean StockNotNull();
+    @Query("SELECT p FROM Product p WHERE p.artist = ?1")
+    List<Product> findAllByArtist(String artist);
 }

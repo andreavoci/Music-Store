@@ -19,39 +19,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotBlank(message = "Username is missing!")
-    @Size(max = 50)
     private String username;
 
-    @NotBlank(message = "Email is missing!")
-    @Size(max = 50)
-    @Email
     private String email;
 
-    @NotBlank(message = "Password is missing!")
-    @Size(max = 120)
     private String password;
 
-    @Column(name = "registration_date")
-    private LocalDate registrationDate;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", schema = "store",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
-
-    @OneToMany(mappedBy = "user")
-    private Set<Order> orders;
-
-    @OneToOne(mappedBy = "user",cascade = CascadeType.REMOVE)
-    private ShoppingCart shoppingCart;
+    private String token;
 
     public User(String username, String email, String password){
         this.username=username;
         this.email=email;
         this.password=password;
-        this.registrationDate=LocalDate.now();
+        this.role=UserRole.CUSTOMER;
     }
-
 }

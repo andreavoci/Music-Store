@@ -22,23 +22,15 @@ public class OrderItems {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     @JsonIgnore
     private Order order;
-
-    @NotNull
-    @Column(name = "quantity")
-    private int quantity;
 
     @NotNull
     @Column(name = "amount")
     private double amount;
 
-    public OrderItems(Product product, Order order,int quantity, double amount){
+    public OrderItems(Product product, double amount){
         this.product=product;
-        this.order=order;
-        this.quantity=quantity;
         this.amount=amount;
     }
 }

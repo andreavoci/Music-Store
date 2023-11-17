@@ -1,17 +1,12 @@
 package com.example.musicstore.service;
 
-import com.example.musicstore.entity.MusicGenre;
 import com.example.musicstore.entity.Product;
 import com.example.musicstore.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,71 +15,45 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Transactional(readOnly = true)
-    public List<Product> showAllProducts(){return productRepository.findAll();}
+    public List<Product> showAllProducts(){
+        return productRepository.findAll();}
 
-    @Transactional(readOnly = true)
-    public Optional<Product> getProducts(long id){return productRepository.findById(id);}
+    public Product getProduct(long id){return productRepository.findById(id).get();}
 
-    @Transactional(readOnly = false)
-    public Optional<Product> addProduct(Product product) {
-        Optional<Product> musicOptional = getProducts(product.getId());
-        if (musicOptional.isEmpty()) {
-            return Optional.of(productRepository.save(product));
+    public ResponseEntity create(Product product){ return ResponseEntity.ok(productRepository.save(product));}
+
+    public ResponseEntity update(Product product) {
+        Optional<Product> musicOptional = productRepository.findById(product.getId());
+        if(musicOptional.isPresent()){
+            if(product.getTitle()!=null)musicOptional.get().setTitle(product.getTitle());
+            if(product.getArtist()!=null)musicOptional.get().setArtist(product.getArtist());
+            if(product.getGenre()!=null)musicOptional.get().setGenre(product.getGenre());
+            if(product.getPrice()!=0.0)musicOptional.get().setPrice(product.getPrice());
+            if(product.getStock()!=0)musicOptional.get().setStock(product.getStock());
+            if(product.getIsrc()!=0)musicOptional.get().setIsrc(product.getIsrc());
+            if(product.getCover()!=null)musicOptional.get().setCover(product.getCover());
+            if(product.getTracklist()!=null)musicOptional.get().setTracklist(product.getTracklist());
+            if(product.getCd()!=0)musicOptional.get().setCd(product.getCd());
+            if(product.getReleaseDate()!=null)musicOptional.get().setReleaseDate(product.getReleaseDate());
+
+            productRepository.save(musicOptional.get());
+            return ResponseEntity.ok(Collections.singletonMap("message","update correctly"));
         }
-        return Optional.empty();
+        return ResponseEntity.badRequest().body("Product not found!");
     }
 
-    @Transactional(readOnly = false)
-    public Optional<Product> updateProduct(Product product) {
-        Optional<Product> musicOptional = getProducts(product.getId());
-        return musicOptional.map(value -> productRepository.save(
-                value
-                        .setTitle(product.getTitle()))
-                        .setStock(product.getStock())
-                        .setCover(product.getCover())
-                        .setTracklist(product.getTracklist())
-                        .setCDNumber(product.getCDNumber())
-                        .setArtist(product.getArtist())
-                        .setRelaseDate(product.getRelaseDate())
-                        .setGenre(product.getGenre())
-                        .setPrice(product.getPrice()));
+    public ResponseEntity delete(List<Long> products){
+        products.forEach(p -> {
+            productRepository.deleteById(p);
+        });
+        return ResponseEntity.ok(Collections.singletonMap("message","deleted correctly"));
     }
 
-    @Transactional(readOnly = false)
-    public List<Product> showAllProductsPaged(int pageNumber, int pageSize, String sortBy){
-        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
-        Page<Product> pagedResult = productRepository.findAll(paging);
-        if(pagedResult.hasContent())
-            return pagedResult.getContent();
-        else
-            return new ArrayList<>();
+    public List<Product> showProductsByTitle(String title) {
+        return productRepository.findAllByTitle(title);
     }
 
-    @Transactional(readOnly = true)
-    public List<Product> showProductsByTitle(String title){
-        return productRepository.findByTitleContaining(title);
+    public List<Product> showProductsByArtist(String artist) {
+        return productRepository.findAllByArtist(artist);
     }
-
-    @Transactional(readOnly = true)
-    public List<Product> showProductsByArtist(String artist){
-        return productRepository.findByArtist(artist);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Product> showProductsBySong(String song){return productRepository.findByTracklistContaining(song);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Product> showProductsByGenre(MusicGenre genre, int pageNumber, int pageSize, String sortBy) {
-        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
-        Page<Product> pagedResult = productRepository.findByGenre(genre, paging);
-        if (pagedResult.hasContent()) {
-            return pagedResult.getContent();
-        } else {
-            return new ArrayList<>();
-        }
-    }
-    @Transactional(readOnly = true)
-    public List<Product> showProductsByRelaseDate(String date){ return productRepository.findByRelaseDate(date); }
 }

@@ -1,8 +1,8 @@
 package com.example.musicstore.controller;
 
+import com.example.musicstore.service.AuthService;
 import com.example.musicstore.service.SignupRequest;
 import com.example.musicstore.service.UserService;
-import com.example.musicstore.support.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,42 +16,12 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
-    UserService userService;
+    AuthService authService;
 
+    @PostMapping(path = "/login")
+    public ResponseEntity<String> login(@RequestBody SignupRequest body){return authService.login(body.getUsername(), body.getPassword());}
 
-    @PostMapping(value = "/signin", consumes = {"application/json"})
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignupRequest signupRequest){
-        try{
-            return ResponseEntity.ok(userService.authenticateUser(signupRequest));
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(new ResponseMessage("Incorrect credentials"));
-        }
-    }
+    @PostMapping(path = "/register")
+    public ResponseEntity<String> register(@RequestBody SignupRequest body){return authService.register(body.getUsername(), body.getEmail(), body.getPassword());}
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "/signup/admin", consumes = {"application/json"})
-    public ResponseEntity<ResponseMessage> registerAdmin(@Valid @RequestBody SignupRequest signupRequest){
-        if(!signupRequest.getRole().contains("admin"))
-            return ResponseEntity.badRequest().body(new ResponseMessage("Access Denied"));
-        return getMessageResponseResponseEntity(signupRequest);
-    }
-
-    @PostMapping(value = "/signup/customer", consumes = {"application/json"})
-    public ResponseEntity<ResponseMessage> registerCustomer(@Valid @RequestBody SignupRequest signupRequest){
-        System.out.println("Ciao");
-        if(signupRequest.getRole()!=null && signupRequest.getRole().contains("admin"))
-            return ResponseEntity.badRequest().body(new ResponseMessage("Access Denied"));
-        return getMessageResponseResponseEntity(signupRequest);
-    }
-
-    @NotNull
-    private ResponseEntity<ResponseMessage> getMessageResponseResponseEntity(@Valid @RequestBody SignupRequest signupRequest) {
-        if(userService.checkUsername(signupRequest.getUsername()))
-            return ResponseEntity.badRequest().body(new ResponseMessage("Username unavailable"));
-        if(userService.checkEmail(signupRequest.getEmail()))
-            return ResponseEntity.badRequest().body(new ResponseMessage("Email unavailable"));
-        System.out.println("ciao2");
-        userService.registerUser(signupRequest);
-        return ResponseEntity.ok(new ResponseMessage("The user has been successfully registered"));
-    }
 }

@@ -2,7 +2,6 @@ package com.example.musicstore.controller;
 
 import com.example.musicstore.entity.User;
 import com.example.musicstore.service.UserService;
-import com.example.musicstore.support.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +19,23 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("(hasRole('CUSTOMER') and #username == principal.username) or hasRole('ADMIN')")
-    @GetMapping(value = "/{username}", produces = "application/json")
-    public ResponseEntity<?> getUser(@PathVariable("username") String username){
-        Optional<User> optionalUser = userService.getUserByUsername(username);
-        return (optionalUser.isPresent())
-                ? ResponseEntity.ok(optionalUser.get())
-                : ResponseEntity.badRequest().body(new ResponseMessage("Nonexistent User"));
+    @GetMapping
+    public List<User> getAllUsers(){
+        return userService.getAllUsers();
     }
 
-    @GetMapping(value = "/all", produces = "application/json")
-    public ResponseEntity<?> getAllUsers(){
-        List<User> users = userService.getUsers();
-        return ResponseEntity.ok(users);
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable("id") Long id){
+        return userService.getUser(id);
+    }
+
+    @GetMapping(path = "api/user/profile")
+    public ResponseEntity getUserProfile(@RequestParam Long id) {
+        User user = userService.getUser(id);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -2,18 +2,18 @@ package com.example.musicstore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import lombok.experimental.Accessors;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Accessors(chain = true)
 @Entity
 @Table(name = "cart_items", schema = "store")
-public class CartItems {
+public class CartItems implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -22,10 +22,8 @@ public class CartItems {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     @JsonIgnore
     private ShoppingCart cart;
 
@@ -37,10 +35,10 @@ public class CartItems {
     @Column(name = "amount")
     private double amount;
 
-    public CartItems(Product product, ShoppingCart cart, int quantity, double amount){
-        this.product=product;
-        this.cart=cart;
-        this.quantity=quantity;
-        this.amount=amount;
+    public CartItems(Product product, ShoppingCart cart, int quantity, double amount) {
+        this.product = product;
+        this.cart = cart;
+        this.quantity = quantity;
+        this.amount = amount;
     }
 }

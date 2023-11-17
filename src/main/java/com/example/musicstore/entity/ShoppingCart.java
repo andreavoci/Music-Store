@@ -8,32 +8,33 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
-@Accessors(chain = true)
 @NoArgsConstructor
 @Entity
 @Table(name = "shopping_cart", schema = "store")
 public class ShoppingCart {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonIgnore
-    @MapsId
     private User user;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @Column(name = "products")
-    private Set<CartItems> cartItems = new HashSet<>();
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItems> cartItems = new ArrayList<>();
 
     @Basic
     @Column(name = "amount")
     private double amount;
+
+    private Date date;
+
+    public ShoppingCart(User user, List<CartItems> items, double amount) {
+        this.user = user;
+        this.amount = amount;
+        this.date=new Date();
+    }
 }
