@@ -16,7 +16,7 @@
                                     </div>
                                     <div class="cart_item_price cart_info_col">
                                       <div class="cart_item_title">Quantity</div>
-                                      <div class="cart_item_text"><button (click)="update(tempCartItem, -1)"> - </button> {{ tempCartItem.quantity}} <button (click)="update(tempCartItem, 1)" *ngIf="tempCartItem.quantity<=tempCartItem.product.stock">+</button> </div>
+                                      <div class="cart_item_text"><button (click)="update(tempCartItem, -1)"> - </button> {{ tempCartItem.quantity}} <button (click)="update(tempCartItem, 1)" *ngIf="tempCartItem.quantity<=tempCartItem.product.stock -1">+</button> </div>
                                   </div>
                                     <div class="cart_item_price cart_info_col">
                                         <div class="cart_item_title">Price</div>
